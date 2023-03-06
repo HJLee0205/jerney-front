@@ -1,25 +1,49 @@
 import React from "react";
 import axios from "axios";
-import {BrowserView, MobileView} from "react-device-detect";
-import FunctionComponent from "./functionComponent";
-import ClassComponent from "./classComponent";
-import MainPage from "./components/mainPage";
+import Movie from "./components/Movie"
 
 
 class App extends React.Component {
     state = {
-        isLoading: true
+        isLoading: true,
+        movies: []
     };
+
+    // async : 싱크할때까지 기다려 달라
+    // await : 무엇을 기다릴까?
+    getMovies = async() => {
+        const {data : {data : {movies}}} =
+            await axios.get("https://yts-proxy.now.sh/list_movies.json");
+        console.log(movies);
+        this.setState({movies, isLoading: false});
+    }
 
     // 마운트 된 후 실행되는 함수
     componentDidMount() {
-        setTimeout(() => {
-            this.setState({ isLoading: false })
-        }, 5000);
+        this.getMovies();
     }
 
     render() {
-        return <div>{this.state.isLoading ? "Loading..." : "Complete"}</div>
+        const { isLoading, movies } = this.state;
+        return (
+            <div>
+                {isLoading ? "Loading..."
+                    : movies.map((movie) => {
+                        return (
+                            <Movie
+                                key={movie.id}
+                                id={movie.id}
+                                year={movie.year}
+                                title={movie.title}
+                                summary={movie.summary}
+                                poster={movie.medium_cover_image}
+                            />
+                        );
+                        }
+                    )
+                }
+            </div>
+        );
     }
 }
 
