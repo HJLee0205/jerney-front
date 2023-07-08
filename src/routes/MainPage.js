@@ -11,7 +11,7 @@ class MainPage extends React.Component {
         try {
             const response = await axios.get("http://localhost:8080/test");
             console.log(response);
-            this.setState({response})
+            this.setState({testdata : response.data})
         } catch (error) {
             console.log(error);
         }
@@ -27,9 +27,16 @@ class MainPage extends React.Component {
     render() {
         const { testdata } = this.state;
         return (
-            <div>
-                <h1>api 통신 테스트</h1>
-            </div>
+            testdata.map((tdata) => {
+                return (
+                    // js 배열은 정적이지 않으므로 ListToMap 구현일 경우에는 key를 지정해줘야함
+                    <div>
+                        <h1>api 통신 테스트</h1>
+                        <h2 key={tdata.a}>{tdata.name}</h2>
+                        <h2 key={tdata.b}>{tdata.age}</h2>
+                    </div>
+                );
+            })
         );
     }
 }
